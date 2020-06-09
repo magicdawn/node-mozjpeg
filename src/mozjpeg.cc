@@ -1,5 +1,4 @@
 #include "config.h"
-#include "napi.h"
 #include <inttypes.h>
 #include <setjmp.h>
 #include <stddef.h>
@@ -8,6 +7,7 @@
 #include <string>
 #include "mozjpeg.h"
 #include "jpeglib.h"
+#include "napi.h"
 //
 // take from here
 // https://raw.githubusercontent.com/GoogleChromeLabs/squoosh/master/codecs/mozjpeg_enc/mozjpeg_enc.cpp
@@ -51,7 +51,7 @@ int version()
   char buffer[] = xstr(MOZJPEG_VERSION);
   int version = 0;
   int last_index = 0;
-  for (int i = 0; i < strlen(buffer); i++)
+  for (size_t i = 0; i < strlen(buffer); i++)
   {
     if (buffer[i] == '.')
     {
@@ -282,7 +282,7 @@ MozJpegOptions getMozjpegOptions(const Object o)
   return options;
 }
 
-void finalizeCallback(Env env, uint8_t *data)
+void encodeFinalizeCallback(Env env, uint8_t *data)
 {
   delete[] data;
 }
@@ -314,13 +314,14 @@ Value BindEncode(const CallbackInfo &info)
   uint8_t *output = encode(buf, width, height, getMozjpegOptions(options));
 
   int len = sizeof(*output) / sizeof(uint8_t);
-  Buffer<uint8_t> result = Buffer<uint8_t>::New(env, output, len, finalizeCallback);
+  Buffer<uint8_t> result = Buffer<uint8_t>::New(env, output, len, encodeFinalizeCallback);
   return result;
 }
 
 Object Init(Env env, Object exports)
 {
   exports.Set(String::New(env, "encode"), Function::New<BindEncode>(env));
+  return exports;
 }
 
 NODE_API_MODULE(mozjpeg, Init)
