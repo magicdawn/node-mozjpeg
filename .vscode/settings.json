@@ -1,0 +1,8 @@
+{
+  "files.associations": {
+    "iosfwd": "cpp",
+    "string": "cpp",
+    "__config": "cpp",
+    "streambuf": "cpp"
+  }
+}

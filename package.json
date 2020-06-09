@@ -7,7 +7,10 @@
     "test": "mocha",
     "test-cover": "nyc --reporter=lcov --reporter=text mocha",
     "report-cover": "codecov",
-    "gen-readme": "swig render ./readme/readme.md > README.md && prettier --write README.md"
+    "gen-readme": "swig render ./readme/readme.md > README.md && prettier --write README.md",
+    "install": "prebuild-install || node-gyp rebuild",
+    "build-node": "node-gyp rebuild",
+    "build-electron": "npm_config_devdir=~/.electron-gyp node-gyp rebuild --arch=x64 --dist-url=https://electronjs.org/headers --target=`electron -v`"
   },
   "repository": {
     "type": "git",
@@ -28,13 +31,15 @@
     "@magicdawn/eslint-config": "latest",
     "@magicdawn/prettier-config": "latest",
     "codecov": "^3.3.0",
-    "mocha": "^6.1.4",
-    "nyc": "^14.0.0",
-    "should": "^13.2.3",
     "eslint": "^6.8.0",
-    "prettier": "latest",
     "husky": "latest",
-    "lint-staged": "latest"
+    "lint-staged": "latest",
+    "mocha": "^6.1.4",
+    "napa": "^3.0.0",
+    "nyc": "^14.0.0",
+    "prebuild-install": "^5.3.4",
+    "prettier": "latest",
+    "should": "^13.2.3"
   },
   "husky": {
     "hooks": {
@@ -46,5 +51,11 @@
       "prettier --write",
       "git add"
     ]
+  },
+  "napa": {
+    "mozjpeg-src": "mozilla/mozjpeg#v3.3.1"
+  },
+  "dependencies": {
+    "node-addon-api": "^3.0.0"
   }
 }
