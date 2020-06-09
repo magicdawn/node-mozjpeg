@@ -46,25 +46,6 @@ struct MozJpegOptions
   int chroma_quality;
 };
 
-int version()
-{
-  char buffer[] = xstr(MOZJPEG_VERSION);
-  int version = 0;
-  int last_index = 0;
-  for (size_t i = 0; i < strlen(buffer); i++)
-  {
-    if (buffer[i] == '.')
-    {
-      buffer[i] = '\0';
-      version = version << 8 | atoi(&buffer[last_index]);
-      buffer[i] = '.';
-      last_index = i + 1;
-    }
-  }
-  version = version << 8 | atoi(&buffer[last_index]);
-  return version;
-}
-
 uint8_t *encode(uint8_t *image_in,
                 int image_width, int image_height,
                 MozJpegOptions opts)
@@ -321,6 +302,10 @@ Value BindEncode(const CallbackInfo &info)
 Object Init(Env env, Object exports)
 {
   exports.Set(String::New(env, "encode"), Function::New<BindEncode>(env));
+
+  // version
+  exports.Set(String::New(env, "version"), String::New(env, xstr(MOZJPEG_VERSION)));
+
   return exports;
 }
 
