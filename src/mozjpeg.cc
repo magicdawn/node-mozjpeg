@@ -195,7 +195,7 @@ void encode(uint8_t *image_in, int image_width, int image_height,
   jpeg_finish_compress(&cinfo);
 
   /* Step 7: release JPEG compression object */
-  // jpeg_destroy_compress(&cinfo);
+  jpeg_destroy_compress(&cinfo);
 
   /* And we're done! */
   // uint8_t* output
