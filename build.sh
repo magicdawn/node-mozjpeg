@@ -10,7 +10,7 @@ export CPPFLAGS="${OPTIMIZE}"
 
 cd node_modules/mozjpeg-src/
 autoreconf -fiv
-./configure --without-simd
+JPEG_LIB_VERSION="80" ./configure --without-simd
 make libjpeg.la
 exit 0
 

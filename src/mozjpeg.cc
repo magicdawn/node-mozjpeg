@@ -1,13 +1,13 @@
-#include "config.h"
 #include <inttypes.h>
 #include <setjmp.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string>
-#include "mozjpeg.h"
+#include <string.h>
+#include "config.h"
 #include "jpeglib.h"
 #include "napi.h"
+
 //
 // take from here
 // https://raw.githubusercontent.com/GoogleChromeLabs/squoosh/master/codecs/mozjpeg_enc/mozjpeg_enc.cpp
@@ -46,9 +46,11 @@ struct MozJpegOptions
   int chroma_quality;
 };
 
-uint8_t *encode(uint8_t *image_in,
-                int image_width, int image_height,
-                MozJpegOptions opts)
+uint8_t *encode(
+    uint8_t *image_in,
+    int image_width,
+    int image_height,
+    MozJpegOptions opts)
 {
   uint8_t *image_buffer = image_in;
 
@@ -279,10 +281,10 @@ Value BindEncode(const CallbackInfo &info)
     return env.Null();
   }
 
-  if (!info[0].IsArrayBuffer() || !info[1].IsNumber() || !info[2].IsNumber() ||
+  if (!info[0].IsBuffer() || !info[1].IsNumber() || !info[2].IsNumber() ||
       !info[3].IsObject())
   {
-    Napi::TypeError::New(env, "expect (buf, width, height, options")
+    Napi::TypeError::New(env, "expect (buf: Buffer, width: number, height: number, options: Object")
         .ThrowAsJavaScriptException();
     return env.Null();
   }
