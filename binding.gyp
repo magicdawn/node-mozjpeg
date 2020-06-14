@@ -2,10 +2,10 @@
   "targets": [
     {
       "target_name": "mozjpeg",
+      "libraries": ["<(module_root_dir)/node_modules/mozjpeg-src/.libs/libjpeg.a"],
       "sources": [
-        "src/*.cc",
-        "node_modules/mozjpeg-src/.libs/libjpeg.a",
-        "node_modules/mozjpeg-src/rdswitch.c"
+        "node_modules/mozjpeg-src/rdswitch.c",
+        "src/*.cc"
       ],
       "cflags!": ["-fno-exceptions"],
       "cflags_cc!": ["-fno-exceptions"],
@@ -13,7 +13,6 @@
         "<!@(node -p \"require('node-addon-api').include\")",
         "node_modules/mozjpeg-src/"
       ],
-      "dependencies": ["<!(node -p \"require('node-addon-api').gyp\")"],
       "conditions": [
         [
           "OS=='win'",

@@ -1,9 +1,12 @@
 #include <inttypes.h>
+#include <iostream>
 #include <setjmp.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+// prevent format
 #include "config.h"
 #include "jpeglib.h"
 #include "napi.h"
@@ -13,12 +16,12 @@
 // https://raw.githubusercontent.com/GoogleChromeLabs/squoosh/master/codecs/mozjpeg_enc/mozjpeg_enc.cpp
 //
 
-extern "C"
-{
+extern "C" {
 #include "cdjpeg.h"
 }
 
 using namespace Napi;
+using namespace std;
 
 // MozJPEG doesn’t expose a numeric version, so I have to do some fun C macro
 // hackery to turn it into a string. More details here:
@@ -26,8 +29,7 @@ using namespace Napi;
 #define xstr(s) str(s)
 #define str(s) #s
 
-struct MozJpegOptions
-{
+struct MozJpegOptions {
   int quality;
   bool baseline;
   bool arithmetic;
@@ -46,12 +48,10 @@ struct MozJpegOptions
   int chroma_quality;
 };
 
-uint8_t *encode(
-    uint8_t *image_in,
-    int image_width,
-    int image_height,
-    MozJpegOptions opts)
-{
+void encode(uint8_t *image_in, int image_width, int image_height,
+            MozJpegOptions opts,
+            // output
+            uint8_t **output, unsigned long *output_size) {
   uint8_t *image_buffer = image_in;
 
   // The code below is basically the `write_JPEG_file` function from
@@ -76,8 +76,8 @@ uint8_t *encode(
   /* More stuff */
   JSAMPROW row_pointer[1]; /* pointer to JSAMPLE row[s] */
   int row_stride;          /* physical row width in image buffer */
-  uint8_t *output;
-  unsigned long size;
+  // uint8_t *output;
+  // unsigned long size;
 
   /* Step 1: allocate and initialize JPEG compression object */
   struct jpeg_compress_struct cinfo;
@@ -103,7 +103,7 @@ uint8_t *encode(
   //   fprintf(stderr, "can't open %s\n", filename);
   //   exit(1);
   // }
-  jpeg_mem_dest(&cinfo, &output, &size);
+  jpeg_mem_dest(&cinfo, output, output_size);
 
   /* Step 3: set parameters for compression */
 
@@ -122,15 +122,13 @@ uint8_t *encode(
 
   jpeg_set_colorspace(&cinfo, (J_COLOR_SPACE)opts.color_space);
 
-  if (opts.quant_table != -1)
-  {
+  if (opts.quant_table != -1) {
     jpeg_c_set_int_param(&cinfo, JINT_BASE_QUANT_TBL_IDX, opts.quant_table);
   }
 
   cinfo.optimize_coding = opts.optimize_coding;
 
-  if (opts.arithmetic)
-  {
+  if (opts.arithmetic) {
     cinfo.arith_code = TRUE;
     cinfo.optimize_coding = FALSE;
   }
@@ -148,8 +146,7 @@ uint8_t *encode(
   // set_quality_ratings which does some useful heuristic stuff.
   std::string quality_str = std::to_string(opts.quality);
 
-  if (opts.separate_chroma_quality && opts.color_space == JCS_YCbCr)
-  {
+  if (opts.separate_chroma_quality && opts.color_space == JCS_YCbCr) {
     quality_str += "," + std::to_string(opts.chroma_quality);
   }
 
@@ -157,18 +154,14 @@ uint8_t *encode(
 
   set_quality_ratings(&cinfo, (char *)pqual, opts.baseline);
 
-  if (!opts.auto_subsample && opts.color_space == JCS_YCbCr)
-  {
+  if (!opts.auto_subsample && opts.color_space == JCS_YCbCr) {
     cinfo.comp_info[0].h_samp_factor = opts.chroma_subsample;
     cinfo.comp_info[0].v_samp_factor = opts.chroma_subsample;
   }
 
-  if (!opts.baseline && opts.progressive)
-  {
+  if (!opts.baseline && opts.progressive) {
     jpeg_simple_progression(&cinfo);
-  }
-  else
-  {
+  } else {
     cinfo.num_scans = 0;
     cinfo.scan_info = NULL;
   }
@@ -189,8 +182,7 @@ uint8_t *encode(
    */
   row_stride = image_width * 4; /* JSAMPLEs per row in image_buffer */
 
-  while (cinfo.next_scanline < cinfo.image_height)
-  {
+  while (cinfo.next_scanline < cinfo.image_height) {
     /* jpeg_write_scanlines expects an array of pointers to scanlines.
      * Here the array is only one element long, but you could pass
      * more than one scanline at a time if that's more convenient.
@@ -203,11 +195,12 @@ uint8_t *encode(
   jpeg_finish_compress(&cinfo);
 
   /* Step 7: release JPEG compression object */
-  jpeg_destroy_compress(&cinfo);
+  // jpeg_destroy_compress(&cinfo);
 
   /* And we're done! */
   // uint8_t* output
-  return output;
+  // return output;
+  return;
 }
 
 // EMSCRIPTEN_BINDINGS(my_module) {
@@ -235,10 +228,10 @@ uint8_t *encode(
 //   function("free_result", &free_result);
 // }
 
-MozJpegOptions getMozjpegOptions(const Object o)
-{
+MozJpegOptions getMozjpegOptions(const Object o) {
   MozJpegOptions options;
-#define mozjpeg_options_get_int(prop) options.prop = o.Get(#prop).As<Number>().Int32Value()
+#define mozjpeg_options_get_int(prop)                                          \
+  options.prop = o.Get(#prop).As<Number>().Int32Value()
 #define mozjpeg_options_get_bool(prop) options.prop = o.Get(#prop).As<Boolean>()
   // example
   // mozjpeg_options_get(quality) ->
@@ -265,26 +258,22 @@ MozJpegOptions getMozjpegOptions(const Object o)
   return options;
 }
 
-void encodeFinalizeCallback(Env env, uint8_t *data)
-{
-  delete[] data;
-}
+void encodeFinalizeCallback(Env env, uint8_t *data) { delete[] data; }
 
-Value BindEncode(const CallbackInfo &info)
-{
+Value BindEncode(const CallbackInfo &info) {
   Env env = info.Env();
 
-  if (info.Length() < 4)
-  {
+  if (info.Length() < 4) {
     Napi::TypeError::New(env, "Wrong number of arguments")
         .ThrowAsJavaScriptException();
     return env.Null();
   }
 
   if (!info[0].IsBuffer() || !info[1].IsNumber() || !info[2].IsNumber() ||
-      !info[3].IsObject())
-  {
-    Napi::TypeError::New(env, "expect (buf: Buffer, width: number, height: number, options: Object")
+      !info[3].IsObject()) {
+    Napi::TypeError::New(
+        env,
+        "expect (buf: Buffer, width: number, height: number, options: Object")
         .ThrowAsJavaScriptException();
     return env.Null();
   }
@@ -294,19 +283,22 @@ Value BindEncode(const CallbackInfo &info)
   int height = info[2].As<Number>().Int32Value();
   Object options = info[3].ToObject();
 
-  uint8_t *output = encode(buf, width, height, getMozjpegOptions(options));
+  uint8_t *output;
+  unsigned long output_size = 0;
+  encode(buf, width, height, getMozjpegOptions(options), &output, &output_size);
+  // cout << "output length = " << output_size << endl;
 
-  int len = sizeof(*output) / sizeof(uint8_t);
-  Buffer<uint8_t> result = Buffer<uint8_t>::New(env, output, len, encodeFinalizeCallback);
+  Buffer<uint8_t> result =
+      Buffer<uint8_t>::New(env, output, output_size, encodeFinalizeCallback);
   return result;
 }
 
-Object Init(Env env, Object exports)
-{
+Object Init(Env env, Object exports) {
   exports.Set(String::New(env, "encode"), Function::New<BindEncode>(env));
 
   // version
-  exports.Set(String::New(env, "version"), String::New(env, xstr(MOZJPEG_VERSION)));
+  exports.Set(String::New(env, "version"),
+              String::New(env, xstr(MOZJPEG_VERSION)));
 
   return exports;
 }
