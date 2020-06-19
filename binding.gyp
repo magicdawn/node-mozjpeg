@@ -8,7 +8,9 @@
       "libraries": ["<(module_root_dir)/node_modules/mozjpeg-src/.libs/libjpeg.a"],
       "sources": [
         "node_modules/mozjpeg-src/rdswitch.c",
-        "src/*.cc"
+        "src/encode.cc",
+        "src/encode_worker.cc",
+        "src/mozjpeg.cc"
       ],
       "cflags!": ["-fno-exceptions"],
       "cflags_cc!": ["-fno-exceptions"],
@@ -31,9 +33,11 @@
         ]
       ],
       "xcode_settings": {
-        "GCC_ENABLE_CPP_EXCEPTIONS": "YES",
-        "CLANG_CXX_LIBRARY": "libc++",
-        "GCC_SYMBOLS_PRIVATE_EXTERN": "YES"
+        'CLANG_CXX_LANGUAGE_STANDARD': 'c++11',
+        'CLANG_CXX_LIBRARY': 'libc++',
+        'MACOSX_DEPLOYMENT_TARGET': '10.7',
+        'GCC_ENABLE_CPP_EXCEPTIONS': 'YES',
+        'GCC_ENABLE_CPP_RTTI': 'YES'
       },
       "msvs_settings": {
         "VCCLCompilerTool": {
