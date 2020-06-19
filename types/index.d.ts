@@ -1,12 +1,3 @@
-## API
-
-```js
-const mozjpeg = require('node-mozjpeg')
-```
-
-### encode
-
-```ts
 export const version: string
 
 export enum ColorSpace {
@@ -35,4 +26,3 @@ export interface EncodeOptions {
 }
 
 export function encode(input: Buffer, width: number, height: number, options: EncodeOptions): Buffer
-```
