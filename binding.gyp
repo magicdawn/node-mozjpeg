@@ -2,6 +2,9 @@
   "targets": [
     {
       "target_name": "mozjpeg",
+      'defines': [
+        'NAPI_VERSION=3'
+      ],
       "libraries": ["<(module_root_dir)/node_modules/mozjpeg-src/.libs/libjpeg.a"],
       "sources": [
         "node_modules/mozjpeg-src/rdswitch.c",

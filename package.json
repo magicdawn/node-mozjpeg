@@ -8,7 +8,7 @@
     "test-cover": "nyc --reporter=lcov --reporter=text mocha",
     "report-cover": "codecov",
     "gen-readme": "swig render ./readme/readme.md > README.md && prettier --write README.md",
-    "install": "prebuild-install || node-gyp rebuild",
+    "install": "node install/build-dep.js && (prebuild-install --runtime=napi || node-gyp rebuild)",
     "build-node": "node-gyp rebuild",
     "build-electron": "npm_config_devdir=~/.electron-gyp node-gyp rebuild --arch=x64 --dist-url=https://electronjs.org/headers --target=`electron -v`"
   },
@@ -58,5 +58,10 @@
   "dependencies": {
     "bindings": "^1.5.0",
     "node-addon-api": "^3.0.0"
+  },
+  "binary": {
+    "napi_versions": [
+      3
+    ]
   }
 }
