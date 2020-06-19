@@ -4,6 +4,17 @@
   "description": "mozjpeg node binding",
   "main": "index.js",
   "types": "types/index.d.ts",
+  "files": [
+    "src",
+    "lib",
+    "install",
+    "types",
+    "binding.gyp",
+    "package.json",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
   "scripts": {
     "test": "mocha && tsd",
     "test-cover": "nyc --reporter=lcov --reporter=text mocha",
