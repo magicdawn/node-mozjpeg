@@ -49,7 +49,6 @@
     "mocha": "^6.1.4",
     "napa": "^3.0.0",
     "nyc": "^14.0.0",
-    "prebuild-install": "^5.3.4",
     "prettier": "latest",
     "should": "^13.2.3",
     "tsd": "^0.11.0"
@@ -70,7 +69,8 @@
   },
   "dependencies": {
     "bindings": "^1.5.0",
-    "node-addon-api": "^3.0.0"
+    "node-addon-api": "^3.0.0",
+    "prebuild-install": "^5.3.4"
   },
   "binary": {
     "napi_versions": [
