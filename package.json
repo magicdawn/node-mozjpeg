@@ -20,7 +20,7 @@
     "test-cover": "nyc --reporter=lcov --reporter=text mocha",
     "report-cover": "codecov",
     "gen-readme": "swig render ./readme/readme.md > README.md && prettier --write README.md",
-    "install": "node install/build-dep.js && (prebuild-install --runtime=napi || node-gyp rebuild)",
+    "install": "prebuild-install --runtime=napi || (node install/build-dep.js && node-gyp rebuild)",
     "prebuild": "prebuild --runtime=napi"
   },
   "repository": {
