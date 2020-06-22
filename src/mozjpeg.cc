@@ -10,9 +10,9 @@
 #include <config.h>
 #include <jpeglib.h>
 #include <napi.h>
-#include "common.h"
-#include "encode.h"
-#include "encode_worker.h"
+#include "./common.h"
+#include "./encode.h"
+#include "./encode_worker.h"
 
 //
 // take from here

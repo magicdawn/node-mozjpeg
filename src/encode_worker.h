@@ -1,7 +1,7 @@
 #pragma once
 
 #include <napi.h>
-#include "common.h"
+#include "./common.h"
 
 using namespace Napi;
 

@@ -10,8 +10,8 @@
 #include <config.h>
 #include <jpeglib.h>
 #include <napi.h>
-#include "common.h"
-#include "encode.h"
+#include "./common.h"
+#include "./encode.h"
 
 //
 // take from here
