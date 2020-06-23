@@ -1,6 +1,6 @@
 {
   "name": "node-mozjpeg",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "mozjpeg node binding",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
