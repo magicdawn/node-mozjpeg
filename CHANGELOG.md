@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.1.0 2020-06-23
+
+- add `Napi::AsyncWorker` version `encodeAsync`, do not block the EventLoop
+
 ## v0.0.3 2020-06-19
 
 - fix `prebuild-install` command not found
