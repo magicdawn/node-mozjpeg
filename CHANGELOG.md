@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.1.2 2020-06-23
+
+- add jsdelivr binary host
+
 ## v0.1.1 2020-06-23
 
 - prevent `types/index.test-d.ts` from publish

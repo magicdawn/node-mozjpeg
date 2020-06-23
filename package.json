@@ -74,6 +74,8 @@
     "prebuild-install": "^5.3.4"
   },
   "binary": {
+    "host": "https://cdn.jsdelivr.net/gh/magicdawn/prebuild-binary@master",
+    "remote_path": "files/{name}/v{version}",
     "napi_versions": [
       3
     ]
