@@ -3,6 +3,7 @@ node_js:
   - lts/*
   - node
 script: 'npm run test-cover'
+before_script: 'npm run install'
 after_script: 'npm run report-cover'
 notifications:
   email: false
