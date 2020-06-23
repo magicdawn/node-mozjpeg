@@ -2,11 +2,12 @@
   "name": "node-mozjpeg",
   "version": "0.0.3",
   "description": "mozjpeg node binding",
-  "main": "index.js",
+  "main": "lib/index.js",
   "types": "types/index.d.ts",
   "files": [
     "src",
     "lib",
+    "types/index.d.ts",
     "install",
     "types",
     "binding.gyp",
@@ -50,6 +51,7 @@
     "napa": "^3.0.0",
     "nyc": "^14.0.0",
     "prettier": "latest",
+    "sharp": "^0.25.4",
     "should": "^13.2.3",
     "tsd": "^0.11.0"
   },

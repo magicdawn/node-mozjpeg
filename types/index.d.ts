@@ -25,4 +25,16 @@ export interface EncodeOptions {
   chroma_quality: number
 }
 
-export function encode(input: Buffer, width: number, height: number, options: EncodeOptions): Buffer
+export function encode(
+  input: Buffer,
+  width: number,
+  height: number,
+  options?: EncodeOptions
+): Buffer
+
+export function encodeAsync(
+  input: Buffer,
+  width: number,
+  height: number,
+  options?: EncodeOptions
+): Promise<Buffer>

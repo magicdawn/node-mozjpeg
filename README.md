@@ -22,7 +22,7 @@ $ npm i -S node-mozjpeg
 const mozjpeg = require('node-mozjpeg')
 ```
 
-### encode
+### types
 
 ```ts
 export const version: string
@@ -51,8 +51,55 @@ export interface EncodeOptions {
   separate_chroma_quality: boolean
   chroma_quality: number
 }
+```
 
-export function encode(input: Buffer, width: number, height: number, options: EncodeOptions): Buffer
+### encode
+
+this will **block** the EventLoop, **do not** use in production
+
+```ts
+export function encode(
+  input: Buffer,
+  width: number,
+  height: number,
+  options?: EncodeOptions
+): Buffer
+```
+
+### encodeAsync
+
+same as `encode` except it's using libuv to encode and return Promise
+
+```ts
+export function encodeAsync(
+  input: Buffer,
+  width: number,
+  height: number,
+  options?: EncodeOptions
+): Promise<Buffer>
+```
+
+### defaultOptions
+
+```js
+const defaultOptions = {
+  quality: 75,
+  baseline: false,
+  arithmetic: false,
+  progressive: true,
+  optimize_coding: true,
+  smoothing: 0,
+  color_space: ColorSpace.YCbCr,
+  quant_table: 3,
+  trellis_multipass: false,
+  trellis_opt_zero: false,
+  trellis_opt_table: false,
+  trellis_loops: 1,
+  auto_subsample: true,
+  chroma_subsample: 2,
+  separate_chroma_quality: false,
+  chroma_quality: 75,
+}
 ```
 
 ## Changelog
