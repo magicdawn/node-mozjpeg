@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.1.3 2020-06-23
+
+- remove wrapper `async`, `encode` & `encodeAsync` are plain functions returns `bindings[method]()`
+
 ## v0.1.2 2020-06-23
 
 - add jsdelivr binary host
