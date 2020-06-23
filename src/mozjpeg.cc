@@ -62,17 +62,34 @@ bool inline checkParameters(const CallbackInfo &info)
 Value BindEncode(const CallbackInfo &info)
 {
   Env env = info.Env();
+  HandleScope scope(env);
+
   bool next = checkParameters(info);
   if (!next)
   {
     return env.Null();
   }
 
-  EncodeInput i = getEncodeInput(info);
+  // EncodeInput i = getEncodeInput(info);
+  // #ifdef DEBUG
+  // printf("i.input = 0x%" PRIXPTR "\n", (uintptr_t)i.input);
+  // printf("i.input is %s \n", i.input == NULL ? "empty" : "not empty");
+  // printf("width = %d, height = %d, i.options.quality = %d \n", i.width, i.height, i.options.quality);
+  // #endif
+
+  Buffer<uint8_t> buf = info[0].As<Buffer<uint8_t>>();
+  int width = info[1].As<Number>().Int32Value();
+  int height = info[2].As<Number>().Int32Value();
+  Object options = info[3].ToObject();
+  EncodeInput i = {
+      buf.Data(),
+      width,
+      height,
+      getMozjpegOptions(options)};
+
   EncodeResult encodeResult = encode(i);
   uint8_t *output = encodeResult.output;
   unsigned long size = encodeResult.size;
-  // cout << "encodeResult.size = " << size << endl;
 
   Buffer<uint8_t> result =
       Buffer<uint8_t>::New(env, output, size, encodeFinalizeCallback);
@@ -88,7 +105,16 @@ Value BindEncodeAsync(const CallbackInfo &info)
     return env.Null();
   }
 
-  EncodeInput i = getEncodeInput(info);
+  Buffer<uint8_t> buf = info[0].As<Buffer<uint8_t>>();
+  int width = info[1].As<Number>().Int32Value();
+  int height = info[2].As<Number>().Int32Value();
+  Object options = info[3].ToObject();
+  EncodeInput i = {
+      buf.Data(),
+      width,
+      height,
+      getMozjpegOptions(options)};
+
   Promise::Deferred d = Promise::Deferred::New(env);
 
   MozjpegEncodeWorker *w = new MozjpegEncodeWorker(env, d, i);

@@ -33,7 +33,7 @@ using namespace std;
 #define xstr(s) str(s)
 #define str(s) #s
 
-EncodeResult encode(EncodeInput i)
+EncodeResult encode(const EncodeInput &i)
 {
   // deconstruct
   uint8_t *image_in = i.input;
@@ -42,7 +42,7 @@ EncodeResult encode(EncodeInput i)
   MozJpegOptions opts = i.options;
 
   uint8_t *buffer = image_in;
-  uint8_t *result;
+  uint8_t *output;
 
   int channels = 3;
   int height;
@@ -61,7 +61,7 @@ EncodeResult encode(EncodeInput i)
   compress.err = jpeg_std_error(&jerr);
 
   jpeg_create_compress(&compress);
-  jpeg_mem_dest(&compress, &result, &length);
+  jpeg_mem_dest(&compress, &output, &length);
 
   compress.image_width = width;
   compress.image_height = height;
@@ -132,13 +132,7 @@ EncodeResult encode(EncodeInput i)
   jpeg_finish_compress(&compress);
   jpeg_destroy_compress(&compress);
 
-  // free_buffer();
-  // buffer = result;
-  // return val(typed_memory_view(length, buffer));
-
-  EncodeResult ret;
-  ret.output = result;
-  ret.size = length;
+  EncodeResult ret = {output, length};
   return ret;
 }
 
@@ -173,12 +167,19 @@ MozJpegOptions getMozjpegOptions(const Object &o)
 
 EncodeInput getEncodeInput(const CallbackInfo &info)
 {
+  // EscapableHandleScope escope(info.Env());
+  // escope.Escape(buf).As<Buffer<uint8_t>>().Data(),
+
   Buffer<uint8_t> buf = info[0].As<Buffer<uint8_t>>();
   int width = info[1].As<Number>().Int32Value();
   int height = info[2].As<Number>().Int32Value();
   Object options = info[3].ToObject();
 
-  EncodeInput i = {buf.Data(), width, height, getMozjpegOptions(options)};
+  EncodeInput i = {
+      buf.Data(),
+      width,
+      height,
+      getMozjpegOptions(options)};
   return i;
 }
 

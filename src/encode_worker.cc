@@ -26,7 +26,6 @@ void MozjpegEncodeWorker::OnOK()
 {
   uint8_t *output = this->result.output;
   unsigned long size = this->result.size;
-  // cout << "encodeResult.size = " << size << endl;
 
   Buffer<uint8_t> buf =
       Buffer<uint8_t>::New(Env(), output, size, encodeFinalizeCallback);

@@ -6,7 +6,7 @@
 using namespace Napi;
 
 // encode
-EncodeResult encode(EncodeInput i);
+EncodeResult encode(const EncodeInput &i);
 
 // getOption
 MozJpegOptions getMozjpegOptions(const Napi::Object &o);
