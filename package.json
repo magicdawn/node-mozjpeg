@@ -7,9 +7,8 @@
   "files": [
     "src",
     "lib",
-    "types/index.d.ts",
     "install",
-    "types",
+    "types/index.d.ts",
     "binding.gyp",
     "package.json",
     "README.md",

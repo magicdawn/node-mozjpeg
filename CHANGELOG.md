@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.1.1 2020-06-23
+
+- prevent `types/index.test-d.ts` from publish
+
 ## v0.1.0 2020-06-23
 
 - add `Napi::AsyncWorker` version `encodeAsync`, do not block the EventLoop
