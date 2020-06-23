@@ -15,5 +15,9 @@ node_js:
 
 script: 'npm run test-cover'
 after_script: 'npm run report-cover'
+
+after_failure:
+  - cat node_modules/mozjpeg-src/config.log
+
 notifications:
   email: false
