@@ -1,6 +1,7 @@
 const should = require('should')
 const sharp = require('sharp')
 const {encode, encodeAsync} = require('..')
+const {encodeSync} = require('../lib')
 
 const file = __dirname + '/fixtures/test.jpg'
 
@@ -26,16 +27,16 @@ async function decode(input) {
 }
 
 describe('encode', function () {
-  it('encode', async function () {
+  it('encodeSync', async function () {
     const {data, width, height} = await decode(file)
-    const buf = encode(data, width, height)
+    const buf = encodeSync(data, width, height)
     buf.should.be.instanceof(Buffer)
     buf.length.should.above(0)
   })
 
-  it('encodeAsync', async () => {
+  it('encode', async () => {
     const {data, width, height} = await decode(file)
-    const buf = await encodeAsync(data, width, height)
+    const buf = await encode(data, width, height)
     buf.should.be.instanceof(Buffer)
     buf.length.should.above(0)
   })

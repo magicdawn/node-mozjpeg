@@ -59,7 +59,7 @@ bool inline checkParameters(const CallbackInfo &info)
   return true;
 }
 
-Value BindEncode(const CallbackInfo &info)
+Value BindEncodeSync(const CallbackInfo &info)
 {
   Env env = info.Env();
   HandleScope scope(env);
@@ -96,7 +96,7 @@ Value BindEncode(const CallbackInfo &info)
   return result;
 }
 
-Value BindEncodeAsync(const CallbackInfo &info)
+Value BindEncode(const CallbackInfo &info)
 {
   Env env = info.Env();
   bool next = checkParameters(info);
@@ -133,10 +133,10 @@ Object Init(Env env, Object exports)
               String::New(env, xstr(MOZJPEG_VERSION)));
 
   // encode
-  export_function("encode", BindEncode);
+  export_function("encodeSync", BindEncodeSync);
 
   // encodeAsync
-  export_function("encodeAsync", BindEncodeAsync);
+  export_function("encode", BindEncode);
 
   return exports;
 }

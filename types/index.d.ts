@@ -25,14 +25,14 @@ export interface EncodeOptions {
   chroma_quality: number
 }
 
-export function encode(
+export function encodeSync(
   input: Buffer,
   width: number,
   height: number,
   options?: EncodeOptions
 ): Buffer
 
-export function encodeAsync(
+export function encode(
   input: Buffer,
   width: number,
   height: number,

@@ -28,4 +28,4 @@ $ npm i -S node-mozjpeg
 
 ## License
 
-the MIT License [LICENSE.md](LICENSE.md)
+the MIT License [LICENSE](LICENSE)
