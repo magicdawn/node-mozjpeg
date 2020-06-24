@@ -1,5 +1,3 @@
-<!-- AUTO_GENERATED_UNTOUCHED_FLAG -->
-
 # node-mozjpeg
 
 > mozjpeg node binding
@@ -9,6 +7,11 @@
 [![npm version](https://img.shields.io/npm/v/node-mozjpeg.svg?style=flat-square)](https://www.npmjs.com/package/node-mozjpeg)
 [![npm downloads](https://img.shields.io/npm/dm/node-mozjpeg.svg?style=flat-square)](https://www.npmjs.com/package/node-mozjpeg)
 [![npm license](https://img.shields.io/npm/l/node-mozjpeg.svg?style=flat-square)](http://magicdawn.mit-license.org)
+
+## Features
+
+- [x] for a 10MB jpeg file, 2x fast than squoosh or @saschazar/wasm-mozjpeg wasm version.
+- [x] None blocking mozjpeg compress. (u should wrap wasm version it in a WebWorker or node.js Worker)
 
 ## Install
 
@@ -108,4 +111,4 @@ const defaultOptions = {
 
 ## License
 
-the MIT License http://magicdawn.mit-license.org
+the MIT License [LICENSE.md](LICENSE.md)

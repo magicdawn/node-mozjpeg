@@ -28,7 +28,7 @@ async function decode(input) {
 describe('encode', function () {
   it('encode', async function () {
     const {data, width, height} = await decode(file)
-    const buf = await encode(data, width, height)
+    const buf = encode(data, width, height)
     buf.should.be.instanceof(Buffer)
     buf.length.should.above(0)
   })
