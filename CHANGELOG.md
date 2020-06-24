@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.2.0 2020-06-23
+
+- rename `encode` to `encodeSync`, `encodeAsync` to `encode`
+
 ## v0.1.3 2020-06-23
 
 - remove wrapper `async`, `encode` & `encodeAsync` are plain functions returns `bindings[method]()`
