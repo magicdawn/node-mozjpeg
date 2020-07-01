@@ -5,7 +5,6 @@
       'defines': [
         'NAPI_VERSION=3'
       ],
-      "libraries": ["<(module_root_dir)/node_modules/mozjpeg-src/.libs/libjpeg.a"],
       "include_dirs": [
         "<!@(node -p \"require('node-addon-api').include\")",
         "node_modules/mozjpeg-src/"
@@ -29,6 +28,18 @@
         }
       },
       "conditions": [
+        [
+          'OS!="win"',
+          {
+            "libraries": ["<(module_root_dir)/node_modules/mozjpeg-src/.libs/libjpeg.a"],
+          }
+        ],
+        [
+          'OS=="win"',
+          {
+            "libraries": ["<(module_root_dir)/node_modules/mozjpeg-src/build/jpeg-static.lib"],
+          }
+        ],
         [
           'OS=="mac"',
           {
