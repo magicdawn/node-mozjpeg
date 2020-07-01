@@ -48,7 +48,7 @@ EncodeResult encode(const EncodeInput &i)
   int height;
   int width;
   int row_stride;
-  size_t length;
+  unsigned long length = 0;
 
   width = image_width;
   height = image_height;
