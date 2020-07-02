@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.2.1 2020-07-02
+
+- adapt windows prebuild, some c++ source modifications
+
 ## v0.2.0 2020-06-23
 
 - rename `encode` to `encodeSync`, `encodeAsync` to `encode`
