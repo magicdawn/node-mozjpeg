@@ -1,6 +1,5 @@
 // napa &&
 //
-
 // set -e
 //
 // export OPTIMIZE="-Oz"
@@ -31,23 +30,77 @@ exec('npx napa')
 
 // build
 const mozjpegDir = `${__dirname}/../node_modules/mozjpeg-src`
-const libFile = `${mozjpegDir}/.libs/libjpeg.a`
+process.chdir(mozjpegDir)
 
-if (fs.existsSync(libFile) && !process.env.FORCE_BUILD_MOZJPEG) {
-  process.exit(0)
+// cmds
+if (process.platform === 'win32') {
+  if (isIa32()) {
+    console.log('[build win32-ia32]')
+    buildWinIa32()
+  } else {
+    console.log('[build win32-x64]')
+    buildWin()
+  }
+} else {
+  console.log('[build unix]')
+  buildUnix()
 }
 
-// env
-const OPTIMIZE = '-Oz'
-Object.assign(process.env, {
-  OPTIMIZE,
-  LDFLAGS: OPTIMIZE,
-  CFLAGS: OPTIMIZE,
-  CPPFLAGS: OPTIMIZE,
-  JPEG_LIB_VERSION: '80',
-})
+function buildUnix() {
+  const libFile = `${mozjpegDir}/.libs/libjpeg.a`
 
-process.chdir(mozjpegDir)
-exec('autoreconf -fiv')
-exec('./configure --without-simd')
-exec('make libjpeg.la')
+  if (fs.existsSync(libFile) && !process.env.FORCE_BUILD_MOZJPEG) {
+    return
+  }
+
+  // env
+  const OPTIMIZE = '-Oz'
+  Object.assign(process.env, {
+    OPTIMIZE,
+    LDFLAGS: OPTIMIZE,
+    CFLAGS: OPTIMIZE,
+    CPPFLAGS: OPTIMIZE,
+    JPEG_LIB_VERSION: '80',
+  })
+
+  // require autoconf libtool etc... on mac // Linux not tested
+  exec('autoreconf -fiv')
+  exec('./configure --without-simd')
+  exec('make libjpeg.la')
+}
+
+function buildWin() {
+  // env
+  Object.assign(process.env, {
+    JPEG_LIB_VERSION: '80',
+  })
+
+  // require cmake & nmake & nasm & `cl.exe`(visual studio)
+  exec('cmake -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=Release ./')
+  exec('nmake jpeg-static')
+}
+
+// windows 32bit
+function buildWinIa32() {
+  const flags = '-m32'
+  Object.assign(process.env, {
+    LDFLAGS: flags,
+    CFLAGS: flags,
+    CPPFLAGS: flags,
+  })
+
+  // same
+  buildWin()
+}
+
+function isIa32() {
+  if (process.env.npm_config_arch === 'ia32') return true
+
+  for (let item of process.argv) {
+    if (item && item.includes('ia32')) {
+      return true
+    }
+  }
+
+  return false
+}

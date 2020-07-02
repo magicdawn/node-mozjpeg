@@ -20,7 +20,9 @@
     "test-cover": "nyc --reporter=lcov --reporter=text mocha",
     "report-cover": "codecov",
     "gen-readme": "swig render ./readme/readme.md > README.md && prettier --write README.md",
-    "install": "prebuild-install --runtime=napi || (node install/build-dep.js && node-gyp rebuild)",
+    "build-native": "node install/build-dep.js && node-gyp rebuild",
+    "build-native-ia32": "node install/build-dep.js --ia32 && node-gyp rebuild --arch ia32",
+    "install": "prebuild-install --runtime=napi || yarn build-native",
     "prebuild": "prebuild --runtime=napi"
   },
   "repository": {
@@ -48,7 +50,9 @@
     "lint-staged": "latest",
     "mocha": "^6.1.4",
     "napa": "^3.0.0",
+    "node-gyp": "^7.0.0",
     "nyc": "^14.0.0",
+    "prebuild": "^10.0.0",
     "prettier": "latest",
     "sharp": "^0.25.4",
     "should": "^13.2.3",

@@ -37,7 +37,7 @@
         [
           'OS=="win"',
           {
-            "libraries": ["<(module_root_dir)/node_modules/mozjpeg-src/build/jpeg-static.lib"],
+            "libraries": ["<(module_root_dir)/node_modules/mozjpeg-src/jpeg-static.lib"],
           }
         ],
         [

@@ -7,7 +7,6 @@
 #include <string.h>
 
 // prevent format
-#include <config.h>
 #include <jpeglib.h>
 #include <napi.h>
 #include "./common.h"
