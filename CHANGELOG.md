@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.2.2 2020-10-19
+
+- like `simple-mac-clipboard`, make this module webpack friendly and external-able
+
 ## v0.2.1 2020-07-02
 
 - adapt windows prebuild, some c++ source modifications
