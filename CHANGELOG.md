@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.2.3 2020-10-19
+
+- fix prev version error
+
 ## v0.2.2 2020-10-19
 
 - like `simple-mac-clipboard`, make this module webpack friendly and external-able
