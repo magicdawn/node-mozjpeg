@@ -1,7 +1,6 @@
 const should = require('should')
 const sharp = require('sharp')
-const {encode, encodeAsync} = require('..')
-const {encodeSync} = require('../lib')
+const {encode, encodeSync} = require('..')
 
 const file = __dirname + '/fixtures/test.jpg'
 
