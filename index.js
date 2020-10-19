@@ -1,3 +1,5 @@
+const {assert} = require('console')
+
 const tryRelease = () => {
   try {
     // prevent webpack error
@@ -56,15 +58,16 @@ const defaultOptions = {
  * @returns {Buffer}
  */
 
-function encodeSync(buf, width, height, options) {
-  options = Object.assign({}, defaultOptions, options)
-  return bindings.encodeSync(buf, width, height, options)
-}
+const makeBinding = (fn) =>
+  function (buf, width, height, options) {
+    const channels = buf.byteLength / width / height
+    assert([3, 4].includes(channels), 'channels should be 3 or 4')
+    options = Object.assign({}, defaultOptions, options)
+    return fn(buf, width, height, channels, options)
+  }
 
-function encode(buf, width, height, options) {
-  options = Object.assign({}, defaultOptions, options)
-  return bindings.encode(buf, width, height, options)
-}
+const encodeSync = makeBinding(bindings.encodeSync)
+const encode = makeBinding(bindings.encode)
 
 module.exports = {
   ColorSpace,

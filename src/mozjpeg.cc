@@ -7,11 +7,11 @@
 #include <string.h>
 
 // prevent format
-#include <jpeglib.h>
-#include <napi.h>
 #include "./common.h"
 #include "./encode.h"
 #include "./encode_worker.h"
+#include <jpeglib.h>
+#include <napi.h>
 
 //
 // take from here
@@ -20,8 +20,7 @@
 // //github.com/saschazar21/webassembly/blob/%40saschazar/wasm-webp%401.3.1/packages/mozjpeg/main.cpp
 //
 
-extern "C"
-{
+extern "C" {
 #include "cdjpeg.h"
 }
 
@@ -34,23 +33,20 @@ using namespace std;
 #define xstr(s) str(s)
 #define str(s) #s
 
-bool inline checkParameters(const CallbackInfo &info)
-{
+bool inline checkParameters(const CallbackInfo &info) {
   Env env = info.Env();
 
-  if (info.Length() < 4)
-  {
+  if (info.Length() < 5) {
     Napi::TypeError::New(env, "Wrong number of arguments")
         .ThrowAsJavaScriptException();
     return false;
   }
 
   // !info[0].IsBuffer() ||
-  if (!info[1].IsNumber() || !info[2].IsNumber() || !info[3].IsObject())
-  {
-    Napi::TypeError::New(
-        env,
-        "expect (buf: Buffer, width: number, height: number, options: Object")
+  if (!info[1].IsNumber() || !info[2].IsNumber() || !info[3].IsNumber() ||
+      !info[4].IsObject()) {
+    Napi::TypeError::New(env, "expect (buf: Buffer, width: number, height: "
+                              "number, channels: number, options: Object")
         .ThrowAsJavaScriptException();
     return false;
   }
@@ -58,14 +54,12 @@ bool inline checkParameters(const CallbackInfo &info)
   return true;
 }
 
-Value BindEncodeSync(const CallbackInfo &info)
-{
+Value BindEncodeSync(const CallbackInfo &info) {
   Env env = info.Env();
   HandleScope scope(env);
 
   bool next = checkParameters(info);
-  if (!next)
-  {
+  if (!next) {
     return env.Null();
   }
 
@@ -73,18 +67,16 @@ Value BindEncodeSync(const CallbackInfo &info)
   // #ifdef DEBUG
   // printf("i.input = 0x%" PRIXPTR "\n", (uintptr_t)i.input);
   // printf("i.input is %s \n", i.input == NULL ? "empty" : "not empty");
-  // printf("width = %d, height = %d, i.options.quality = %d \n", i.width, i.height, i.options.quality);
-  // #endif
+  // printf("width = %d, height = %d, i.options.quality = %d \n", i.width,
+  // i.height, i.options.quality); #endif
 
   Buffer<uint8_t> buf = info[0].As<Buffer<uint8_t>>();
   int width = info[1].As<Number>().Int32Value();
   int height = info[2].As<Number>().Int32Value();
-  Object options = info[3].ToObject();
-  EncodeInput i = {
-      buf.Data(),
-      width,
-      height,
-      getMozjpegOptions(options)};
+  int channels = info[3].As<Number>().Int32Value();
+  Object options = info[4].ToObject();
+  EncodeInput i = {buf.Data(), width, height, channels,
+                   getMozjpegOptions(options)};
 
   EncodeResult encodeResult = encode(i);
   uint8_t *output = encodeResult.output;
@@ -95,24 +87,20 @@ Value BindEncodeSync(const CallbackInfo &info)
   return result;
 }
 
-Value BindEncode(const CallbackInfo &info)
-{
+Value BindEncode(const CallbackInfo &info) {
   Env env = info.Env();
   bool next = checkParameters(info);
-  if (!next)
-  {
+  if (!next) {
     return env.Null();
   }
 
   Buffer<uint8_t> buf = info[0].As<Buffer<uint8_t>>();
   int width = info[1].As<Number>().Int32Value();
   int height = info[2].As<Number>().Int32Value();
-  Object options = info[3].ToObject();
-  EncodeInput i = {
-      buf.Data(),
-      width,
-      height,
-      getMozjpegOptions(options)};
+  int channels = info[3].As<Number>().Int32Value();
+  Object options = info[4].ToObject();
+  EncodeInput i = {buf.Data(), width, height, channels,
+                   getMozjpegOptions(options)};
 
   Promise::Deferred d = Promise::Deferred::New(env);
 
@@ -122,11 +110,10 @@ Value BindEncode(const CallbackInfo &info)
   return d.Promise();
 }
 
-#define export_function(name, fn) \
+#define export_function(name, fn)                                              \
   exports.Set(String::New(env, name), Function::New<fn>(env))
 
-Object Init(Env env, Object exports)
-{
+Object Init(Env env, Object exports) {
   // version
   exports.Set(String::New(env, "version"),
               String::New(env, xstr(MOZJPEG_VERSION)));

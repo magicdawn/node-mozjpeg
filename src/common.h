@@ -3,8 +3,7 @@
 #include <inttypes.h>
 #include <napi.h>
 
-struct MozJpegOptions
-{
+struct MozJpegOptions {
   int quality;
   bool baseline;
   bool arithmetic;
@@ -23,16 +22,15 @@ struct MozJpegOptions
   int chroma_quality;
 };
 
-struct EncodeInput
-{
+struct EncodeInput {
   uint8_t *input;
   int width;
   int height;
+  int channels;
   MozJpegOptions options;
 };
 
-struct EncodeResult
-{
+struct EncodeResult {
   uint8_t *output;
   unsigned long size;
 };

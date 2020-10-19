@@ -7,19 +7,18 @@
 #include <string.h>
 
 // prevent format
-#include <jpeglib.h>
-#include <napi.h>
 #include "./common.h"
 #include "./encode.h"
+#include <jpeglib.h>
+#include <napi.h>
 
 //
 // take from here
 // https://raw.githubusercontent.com/GoogleChromeLabs/squoosh/master/codecs/mozjpeg_enc/mozjpeg_enc.cpp
-// https : //github.com/saschazar21/webassembly/blob/%40saschazar/wasm-webp%401.3.1/packages/mozjpeg/main.cpp
+// https://github.com/saschazar21/webassembly/blob/%40saschazar/wasm-webp%401.3.1/packages/mozjpeg/main.cpp
 //
 
-extern "C"
-{
+extern "C" {
 #include "cdjpeg.h"
 }
 
@@ -32,18 +31,17 @@ using namespace std;
 #define xstr(s) str(s)
 #define str(s) #s
 
-EncodeResult encode(const EncodeInput &i)
-{
+EncodeResult encode(const EncodeInput &i) {
   // deconstruct
   uint8_t *image_in = i.input;
   int image_width = i.width;
   int image_height = i.height;
+  int channels = i.channels;
   MozJpegOptions opts = i.options;
 
   uint8_t *buffer = image_in;
   uint8_t *output;
 
-  int channels = 3;
   int height;
   int width;
   int row_stride;
@@ -65,20 +63,23 @@ EncodeResult encode(const EncodeInput &i)
   compress.image_width = width;
   compress.image_height = height;
   compress.input_components = channels;
-  compress.in_color_space = JCS_RGB;
+  if (channels == 3) {
+    compress.in_color_space = JCS_RGB;
+  }
+  if (channels == 4) {
+    compress.in_color_space = JCS_EXT_RGBA;
+  }
 
   jpeg_set_defaults(&compress);
   jpeg_set_colorspace(&compress, (J_COLOR_SPACE)opts.color_space);
 
-  if (opts.quant_table != -1)
-  {
+  if (opts.quant_table != -1) {
     jpeg_c_set_int_param(&compress, JINT_BASE_QUANT_TBL_IDX, opts.quant_table);
   }
 
   compress.optimize_coding = opts.optimize_coding;
 
-  if (opts.arithmetic)
-  {
+  if (opts.arithmetic) {
     compress.arith_code = TRUE;
     compress.optimize_coding = FALSE;
   }
@@ -95,8 +96,7 @@ EncodeResult encode(const EncodeInput &i)
 
   std::string quality_str = std::to_string(opts.quality);
 
-  if (opts.separate_chroma_quality && opts.color_space == JCS_YCbCr)
-  {
+  if (opts.separate_chroma_quality && opts.color_space == JCS_YCbCr) {
     quality_str += "," + std::to_string(opts.chroma_quality);
   }
 
@@ -104,26 +104,21 @@ EncodeResult encode(const EncodeInput &i)
 
   set_quality_ratings(&compress, (char *)pqual, opts.baseline);
 
-  if (!opts.auto_subsample && opts.color_space == JCS_YCbCr)
-  {
+  if (!opts.auto_subsample && opts.color_space == JCS_YCbCr) {
     compress.comp_info[0].h_samp_factor = opts.chroma_subsample;
     compress.comp_info[0].v_samp_factor = opts.chroma_subsample;
   }
 
-  if (!opts.baseline && opts.progressive)
-  {
+  if (!opts.baseline && opts.progressive) {
     jpeg_simple_progression(&compress);
-  }
-  else
-  {
+  } else {
     compress.num_scans = 0;
     compress.scan_info = NULL;
   }
 
   jpeg_start_compress(&compress, TRUE);
 
-  while (compress.next_scanline < compress.image_height)
-  {
+  while (compress.next_scanline < compress.image_height) {
     row_pointer[0] = &buffer[compress.next_scanline * row_stride];
     jpeg_write_scanlines(&compress, row_pointer, 1);
   }
@@ -135,10 +130,9 @@ EncodeResult encode(const EncodeInput &i)
   return ret;
 }
 
-MozJpegOptions getMozjpegOptions(const Object &o)
-{
+MozJpegOptions getMozjpegOptions(const Object &o) {
   MozJpegOptions options;
-#define mozjpeg_options_get_int(prop) \
+#define mozjpeg_options_get_int(prop)                                          \
   options.prop = o.Get(#prop).As<Number>().Int32Value()
 #define mozjpeg_options_get_bool(prop) options.prop = o.Get(#prop).As<Boolean>()
 
@@ -164,25 +158,18 @@ MozJpegOptions getMozjpegOptions(const Object &o)
   return options;
 }
 
-EncodeInput getEncodeInput(const CallbackInfo &info)
-{
+EncodeInput getEncodeInput(const CallbackInfo &info) {
   // EscapableHandleScope escope(info.Env());
   // escope.Escape(buf).As<Buffer<uint8_t>>().Data(),
 
   Buffer<uint8_t> buf = info[0].As<Buffer<uint8_t>>();
   int width = info[1].As<Number>().Int32Value();
   int height = info[2].As<Number>().Int32Value();
-  Object options = info[3].ToObject();
-
-  EncodeInput i = {
-      buf.Data(),
-      width,
-      height,
-      getMozjpegOptions(options)};
+  int channels = info[3].As<Number>().Int32Value();
+  Object options = info[4].ToObject();
+  EncodeInput i = {buf.Data(), width, height, channels,
+                   getMozjpegOptions(options)};
   return i;
 }
 
-void encodeFinalizeCallback(Napi::Env env, uint8_t *data)
-{
-  delete[] data;
-}
+void encodeFinalizeCallback(Napi::Env env, uint8_t *data) { delete[] data; }
