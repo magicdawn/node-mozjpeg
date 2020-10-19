@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.3.0 2020-10-19
+
+- the binding need channels info, decide by `buf.byteLength / width / height` in js lib
+
 ## v0.2.3 2020-10-19
 
 - fix prev version error
