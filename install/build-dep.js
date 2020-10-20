@@ -65,7 +65,15 @@ function buildUnix() {
 
   // require autoconf libtool etc... on mac // Linux not tested
   exec('autoreconf -fiv')
-  exec('./configure --without-simd')
+
+  try {
+    exec('./configure --without-simd')
+  } catch (e) {
+    console.log('config error, config.log : ')
+    exec('cat config.log')
+    throw e
+  }
+
   exec('make libjpeg.la')
 }
 
