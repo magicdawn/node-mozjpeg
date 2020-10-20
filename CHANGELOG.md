@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.3.1 2020-10-20
+
+- fix `const {assert} = require('console')` vscode auto import to `const assert = require('assert')`
+
 ## v0.3.0 2020-10-19
 
 - the binding need channels info, decide by `buf.byteLength / width / height` in js lib

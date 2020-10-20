@@ -1,4 +1,4 @@
-const {assert} = require('console')
+const assert = require('assert')
 
 const tryRelease = () => {
   try {
