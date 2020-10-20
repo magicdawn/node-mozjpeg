@@ -54,7 +54,7 @@ function buildUnix() {
   }
 
   // env
-  const OPTIMIZE = '-Oz'
+  const OPTIMIZE = '-O3'
   Object.assign(process.env, {
     OPTIMIZE,
     LDFLAGS: OPTIMIZE,
