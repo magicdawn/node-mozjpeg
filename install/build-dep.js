@@ -63,6 +63,11 @@ function buildUnix() {
     JPEG_LIB_VERSION: '80',
   })
 
+  if (process.platform === 'linux') {
+    // add -fPIC
+    process.env.CFLAGS += ' -fPIC'
+  }
+
   // require autoconf libtool etc... on mac // Linux not tested
   exec('autoreconf -fiv')
 
