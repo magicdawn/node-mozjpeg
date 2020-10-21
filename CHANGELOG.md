@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.3.2 2020-10-21
+
+- use `-fPIC` to fix Linux builds, but no prebuilds.
+
 ## v0.3.1 2020-10-20
 
 - fix `const {assert} = require('console')` vscode auto import to `const assert = require('assert')`
