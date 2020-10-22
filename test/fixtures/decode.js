@@ -17,6 +17,6 @@ module.exports = async function decode(input) {
   //   premultiplied: false,
   //   size: 3001500
   // }
-  const {width, height} = info
-  return {data, dataRgba, width, height}
+  const {width, height, channels} = info
+  return {data, dataRgba, width, height, channels}
 }
