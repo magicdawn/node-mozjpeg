@@ -34,13 +34,13 @@ blocked(
 // })
 
 async function main() {
-  const {data, width, height, channels} = await decode(img)
+  const {data, dataRgba, width, height, channels} = await decode(img)
   assert(data.byteLength === width * height * channels)
 
   {
     console.log('---------------------addon encodeSync-----------------')
     const s = performance.now()
-    const encoded = encodeSync(Buffer.from(data), width, height)
+    const encoded = encodeSync(dataRgba, width, height)
     console.log(encoded, bytes(encoded.byteLength))
     fs.writeFileSync(__dirname + '/compress-via-addon-encode.jpg', encoded)
     console.log('time encode-use-addon %sms', (performance.now() - s).toFixed())
@@ -50,7 +50,7 @@ async function main() {
   {
     console.log('---------------------addon encode-----------------')
     const s = performance.now()
-    const encoded = await encode(Buffer.from(data), width, height)
+    const encoded = await encode(dataRgba, width, height)
     console.log(encoded, bytes(encoded.byteLength))
     fs.writeFileSync(__dirname + '/compress-via-addon-encodeAsync.jpg', encoded)
     console.log('time encode-use-addon %sms', (performance.now() - s).toFixed())

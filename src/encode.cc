@@ -14,8 +14,7 @@
 
 //
 // take from here
-// https://raw.githubusercontent.com/GoogleChromeLabs/squoosh/master/codecs/mozjpeg_enc/mozjpeg_enc.cpp
-// https://github.com/saschazar21/webassembly/blob/%40saschazar/wasm-webp%401.3.1/packages/mozjpeg/main.cpp
+// https://github.com/GoogleChromeLabs/squoosh/blob/fd87ae7d2a2dbd9295f5a301d3884011ef2f481a/codecs/mozjpeg_enc/mozjpeg_enc.cpp#L1
 //
 
 extern "C" {
@@ -32,102 +31,161 @@ using namespace std;
 #define str(s) #s
 
 EncodeResult encode(const EncodeInput &i) {
-  // deconstruct
-  uint8_t *image_in = i.input;
-  int image_width = i.width;
-  int image_height = i.height;
-  int channels = i.channels;
+	uint8_t* image_buffer = i.input;
+	int image_width = i.width;
+	int image_height = i.height;
   MozJpegOptions opts = i.options;
 
-  uint8_t *buffer = image_in;
-  uint8_t *output;
 
-  int height;
-  int width;
-  int row_stride;
-  unsigned long length = 0;
+  // The code below is basically the `write_JPEG_file` function from
+  // https://github.com/mozilla/mozjpeg/blob/master/example.c
+  // I just write to memory instead of a file.
 
-  width = image_width;
-  height = image_height;
-  row_stride = width * channels;
+  /* Step 1: allocate and initialize JPEG compression object */
 
-  JSAMPROW row_pointer[1];
-  struct jpeg_error_mgr jerr;
-  struct jpeg_compress_struct compress;
+  /* This struct contains the JPEG compression parameters and pointers to
+   * working space (which is allocated as needed by the JPEG library).
+   * It is possible to have several such structures, representing multiple
+   * compression/decompression processes, in existence at once.  We refer
+   * to any one struct (and its associated working data) as a "JPEG object".
+   */
+  jpeg_compress_struct cinfo;
+  /* This struct represents a JPEG error handler.  It is declared separately
+   * because applications often want to supply a specialized error handler
+   * (see the second half of this file for an example).  But here we just
+   * take the easy way out and use the standard error handler, which will
+   * print a message on stderr and call exit() if compression fails.
+   * Note that this struct must live as long as the main JPEG parameter
+   * struct, to avoid dangling-pointer problems.
+   */
+  jpeg_error_mgr jerr;
+  /* We have to set up the error handler first, in case the initialization
+   * step fails.  (Unlikely, but it could happen if you are out of memory.)
+   * This routine fills in the contents of struct jerr, and returns jerr's
+   * address which we place into the link field in cinfo.
+   */
+  cinfo.err = jpeg_std_error(&jerr);
+  /* Now we can initialize the JPEG compression object. */
+  jpeg_create_compress(&cinfo);
 
-  compress.err = jpeg_std_error(&jerr);
+  /* Step 2: specify data destination (eg, a file) */
+  /* Note: steps 2 and 3 can be done in either order. */
 
-  jpeg_create_compress(&compress);
-  jpeg_mem_dest(&compress, &output, &length);
+  /* Here we use the library-supplied code to send compressed data to a
+   * stdio stream.  You can also write your own code to do something else.
+   * VERY IMPORTANT: use "b" option to fopen() if you are on a machine that
+   * requires it in order to write binary files.
+   */
+  // if ((outfile = fopen(filename, "wb")) == NULL) {
+  //   fprintf(stderr, "can't open %s\n", filename);
+  //   exit(1);
+  // }
+  uint8_t* output = nullptr;
+  unsigned long size = 0;
+  jpeg_mem_dest(&cinfo, &output, &size);
 
-  compress.image_width = width;
-  compress.image_height = height;
-  compress.input_components = channels;
-  if (channels == 3) {
-    compress.in_color_space = JCS_RGB;
-  }
-  if (channels == 4) {
-    compress.in_color_space = JCS_EXT_RGBA;
-  }
+  /* Step 3: set parameters for compression */
 
-  jpeg_set_defaults(&compress);
-  jpeg_set_colorspace(&compress, (J_COLOR_SPACE)opts.color_space);
+  /* First we supply a description of the input image.
+   * Four fields of the cinfo struct must be filled in:
+   */
+  cinfo.image_width = image_width; /* image width and height, in pixels */
+  cinfo.image_height = image_height;
+  cinfo.input_components = 4;          /* # of color components per pixel */
+  cinfo.in_color_space = JCS_EXT_RGBA; /* colorspace of input image */
+  /* Now use the library's routine to set default compression parameters.
+   * (You must set at least cinfo.in_color_space before calling this,
+   * since the defaults depend on the source color space.)
+   */
+  jpeg_set_defaults(&cinfo);
+
+  jpeg_set_colorspace(&cinfo, (J_COLOR_SPACE)opts.color_space);
 
   if (opts.quant_table != -1) {
-    jpeg_c_set_int_param(&compress, JINT_BASE_QUANT_TBL_IDX, opts.quant_table);
+    jpeg_c_set_int_param(&cinfo, JINT_BASE_QUANT_TBL_IDX, opts.quant_table);
   }
 
-  compress.optimize_coding = opts.optimize_coding;
+  cinfo.optimize_coding = opts.optimize_coding;
 
   if (opts.arithmetic) {
-    compress.arith_code = TRUE;
-    compress.optimize_coding = FALSE;
+    cinfo.arith_code = TRUE;
+    cinfo.optimize_coding = FALSE;
   }
 
-  compress.smoothing_factor = opts.smoothing;
+  cinfo.smoothing_factor = opts.smoothing;
 
-  jpeg_c_set_bool_param(&compress, JBOOLEAN_USE_SCANS_IN_TRELLIS,
-                        opts.trellis_multipass);
-  jpeg_c_set_bool_param(&compress, JBOOLEAN_TRELLIS_EOB_OPT,
-                        opts.trellis_opt_zero);
-  jpeg_c_set_bool_param(&compress, JBOOLEAN_TRELLIS_Q_OPT,
-                        opts.trellis_opt_table);
-  jpeg_c_set_int_param(&compress, JINT_TRELLIS_NUM_LOOPS, opts.trellis_loops);
+  jpeg_c_set_bool_param(&cinfo, JBOOLEAN_USE_SCANS_IN_TRELLIS, opts.trellis_multipass);
+  jpeg_c_set_bool_param(&cinfo, JBOOLEAN_TRELLIS_EOB_OPT, opts.trellis_opt_zero);
+  jpeg_c_set_bool_param(&cinfo, JBOOLEAN_TRELLIS_Q_OPT, opts.trellis_opt_table);
+  jpeg_c_set_int_param(&cinfo, JINT_TRELLIS_NUM_LOOPS, opts.trellis_loops);
 
+  // A little hacky to build a string for this, but it means we can use
+  // set_quality_ratings which does some useful heuristic stuff.
   std::string quality_str = std::to_string(opts.quality);
 
   if (opts.separate_chroma_quality && opts.color_space == JCS_YCbCr) {
     quality_str += "," + std::to_string(opts.chroma_quality);
   }
 
-  char const *pqual = quality_str.c_str();
+  char const* pqual = quality_str.c_str();
 
-  set_quality_ratings(&compress, (char *)pqual, opts.baseline);
+  set_quality_ratings(&cinfo, (char*)pqual, opts.baseline);
 
   if (!opts.auto_subsample && opts.color_space == JCS_YCbCr) {
-    compress.comp_info[0].h_samp_factor = opts.chroma_subsample;
-    compress.comp_info[0].v_samp_factor = opts.chroma_subsample;
+    cinfo.comp_info[0].h_samp_factor = opts.chroma_subsample;
+    cinfo.comp_info[0].v_samp_factor = opts.chroma_subsample;
   }
 
   if (!opts.baseline && opts.progressive) {
-    jpeg_simple_progression(&compress);
+    jpeg_simple_progression(&cinfo);
   } else {
-    compress.num_scans = 0;
-    compress.scan_info = NULL;
+    cinfo.num_scans = 0;
+    cinfo.scan_info = NULL;
+  }
+  /* Step 4: Start compressor */
+
+  /* TRUE ensures that we will write a complete interchange-JPEG file.
+   * Pass TRUE unless you are very sure of what you're doing.
+   */
+  jpeg_start_compress(&cinfo, TRUE);
+
+  /* Step 5: while (scan lines remain to be written) */
+  /*           jpeg_write_scanlines(...); */
+
+  /* Here we use the library's state variable cinfo.next_scanline as the
+   * loop counter, so that we don't have to keep track ourselves.
+   * To keep things simple, we pass one scanline per call; you can pass
+   * more if you wish, though.
+   */
+  int row_stride = image_width * 4; /* JSAMPLEs per row in image_buffer */
+
+  while (cinfo.next_scanline < cinfo.image_height) {
+    /* jpeg_write_scanlines expects an array of pointers to scanlines.
+     * Here the array is only one element long, but you could pass
+     * more than one scanline at a time if that's more convenient.
+     */
+
+    JSAMPROW row_pointer =
+        &image_buffer[cinfo.next_scanline * row_stride]; /* pointer to JSAMPLE row[s] */
+    (void)jpeg_write_scanlines(&cinfo, &row_pointer, 1);
   }
 
-  jpeg_start_compress(&compress, TRUE);
+  /* Step 6: Finish compression */
 
-  while (compress.next_scanline < compress.image_height) {
-    row_pointer[0] = &buffer[compress.next_scanline * row_stride];
-    jpeg_write_scanlines(&compress, row_pointer, 1);
-  }
+  jpeg_finish_compress(&cinfo);
 
-  jpeg_finish_compress(&compress);
-  jpeg_destroy_compress(&compress);
+  /* Step 7: release JPEG compression object */
 
-  EncodeResult ret = {output, length};
-  return ret;
+  // auto js_result = Uint8Array.new_(typed_memory_view(size, output));
+	EncodeResult result = { output, size };
+
+  /* This is an important step since it will release a good deal of memory. */
+  jpeg_destroy_compress(&cinfo);
+  // free(output);
+
+  /* And we're done! */
+  // return js_result;
+	return result;
 }
 
 MozJpegOptions getMozjpegOptions(const Object &o) {
@@ -172,4 +230,6 @@ EncodeInput getEncodeInput(const CallbackInfo &info) {
   return i;
 }
 
-void encodeFinalizeCallback(Napi::Env env, uint8_t *data) { delete[] data; }
+void encodeFinalizeCallback(Napi::Env env, uint8_t *data) {
+	free(data);
+}

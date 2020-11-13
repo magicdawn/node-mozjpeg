@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.4.0 2020-11-13
+
+- sync encode.cc code from squoosh, to fix specific img in dc.
+- remove support for channels=3, require ImageData like channels=4
+
 ## v0.3.2 2020-10-21
 
 - use `-fPIC` to fix Linux builds, but no prebuilds.
