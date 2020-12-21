@@ -61,6 +61,7 @@ function buildUnix() {
     CFLAGS: OPTIMIZE,
     CPPFLAGS: OPTIMIZE,
     JPEG_LIB_VERSION: '80',
+    MACOSX_DEPLOYMENT_TARGET: '10.9',
   })
 
   if (process.platform === 'linux') {

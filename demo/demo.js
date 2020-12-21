@@ -6,7 +6,7 @@ const fs = require('fs')
 // cnpm i blocked-at blocked promise.sleep
 const decode = require('../test/fixtures/decode')
 const {encodeSync, encode} = require('..')
-const {encode: encodeUseWasm} = require('handy-img/lib/codec/mozjpeg.js')
+// const {encode: encodeUseWasm} = require('handy-img/lib/codec/mozjpeg.js')
 const bytes = require('bytes')
 
 const blockedAt = require('blocked-at')
@@ -57,15 +57,15 @@ async function main() {
     console.log('---------------------addon encode-----------------')
   }
 
-  {
-    console.log('---------------------wasm-----------------')
-    const s = performance.now()
-    const encoded = await encodeUseWasm(data, width, height)
-    console.log(encoded, bytes(encoded.byteLength))
-    fs.writeFileSync(__dirname + '/compress-via-wasm.jpg', encoded)
-    console.log('time encode-use-wasm %sms', (performance.now() - s).toFixed())
-    console.log('---------------------wasm-----------------')
-  }
+  // {
+  //   console.log('---------------------wasm-----------------')
+  //   const s = performance.now()
+  //   const encoded = await encodeUseWasm(data, width, height)
+  //   console.log(encoded, bytes(encoded.byteLength))
+  //   fs.writeFileSync(__dirname + '/compress-via-wasm.jpg', encoded)
+  //   console.log('time encode-use-wasm %sms', (performance.now() - s).toFixed())
+  //   console.log('---------------------wasm-----------------')
+  // }
 
   console.log('total time %sms', (performance.now() - start).toFixed())
 

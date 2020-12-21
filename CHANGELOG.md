@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.4.1 2020-12-21
+
+- fix `symbol not found ____chkstk_darwin` issue on macOS 10.12.6, see [stackoverflow](https://stackoverflow.com/questions/61889358/macos-app-compiled-with-deployment-10-10-on-catalina-crashes-on-versions-highs)
+
 ## v0.4.0 2020-11-13
 
 - sync encode.cc code from squoosh, to fix specific img in dc.

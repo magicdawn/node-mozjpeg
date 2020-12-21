@@ -1,7 +1,7 @@
 const path = require('path')
 const decode = require('../test/fixtures/decode')
 const {encodeSync, encode} = require('..')
-const {encode: encodeUseWasm} = require('handy-img/lib/codec/mozjpeg.js')
+// const {encode: encodeUseWasm} = require('handy-img/lib/codec/mozjpeg.js')
 const assert = require('assert')
 const {Suite} = require('benchmark')
 
