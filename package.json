@@ -22,8 +22,9 @@
     "gen-readme": "swig render ./readme/readme.md > README.md && prettier --write README.md",
     "build-native": "node install/build-dep.js && node-gyp rebuild",
     "build-native-ia32": "node install/build-dep.js --ia32 && node-gyp rebuild --arch ia32",
-    "install": "prebuild-install --runtime=napi || yarn build-native",
-    "prebuild": "prebuild --runtime=napi"
+    "install": "prebuild-install --runtime=napi || npm run build-native",
+    "prebuild": "prebuild --runtime=napi",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -50,7 +51,7 @@
     "bytes": "^3.1.0",
     "codecov": "^3.3.0",
     "eslint": "^6.8.0",
-    "husky": "latest",
+    "husky": "^8.0.0",
     "lint-staged": "latest",
     "mocha": "^6.1.4",
     "napa": "^3.0.0",

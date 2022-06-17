@@ -29,12 +29,12 @@ export function encodeSync(
   input: Buffer,
   width: number,
   height: number,
-  options?: EncodeOptions
+  options?: Partial<EncodeOptions>
 ): Buffer
 
 export function encode(
   input: Buffer,
   width: number,
   height: number,
-  options?: EncodeOptions
+  options?: Partial<EncodeOptions>
 ): Promise<Buffer>
