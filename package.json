@@ -57,7 +57,7 @@
     "napa": "^3.0.0",
     "node-gyp": "^7.0.0",
     "nyc": "^14.0.0",
-    "prebuild": "^10.0.0",
+    "prebuild": "^11.0.3",
     "prettier": "latest",
     "promise.sleep": "^0.2.0",
     "sharp": "^0.25.4",
@@ -75,7 +75,7 @@
   "dependencies": {
     "bindings": "^1.5.0",
     "node-addon-api": "^3.0.0",
-    "prebuild-install": "^5.3.4"
+    "prebuild-install": "^7.1.1"
   },
   "binary": {
     "host": "https://cdn.jsdelivr.net/gh/magicdawn/prebuild-binary@master",

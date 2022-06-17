@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v1.0.1 2022-06-17
+
+- update deps
+
 ## v1.0.0 2022-06-17
 
 - fix encode options type, just need `Patial<EncodeOptions>`
