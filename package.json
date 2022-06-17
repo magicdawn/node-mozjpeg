@@ -64,13 +64,8 @@
     "should": "^13.2.3",
     "tsd": "^0.11.0"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "lint-staged": {
-    "*.{js,less,vue}": [
+    "*.{js,ts,md}": [
       "prettier --write"
     ]
   },
