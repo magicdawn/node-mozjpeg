@@ -60,7 +60,7 @@
     "prebuild": "^11.0.3",
     "prettier": "latest",
     "promise.sleep": "^0.2.0",
-    "sharp": "^0.25.4",
+    "sharp": "^0.30.5",
     "should": "^13.2.3",
     "tsd": "^0.11.0"
   },
