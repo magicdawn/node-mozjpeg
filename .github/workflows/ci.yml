@@ -9,25 +9,22 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest]
-        node-version: [18, 20]
-        # os: [macos-latest]
-        # node-version: [16]
+        node-version: [lts/*]
 
     # runs-on: ubuntu-latest
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install autoconf and automake for macOS
         if: matrix.os == 'macos-latest'
         run: brew install autoconf automake
 
-      - uses: pnpm/action-setup@v2
-        with: { version: 8 }
+      - uses: pnpm/action-setup@v4
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: pnpm
