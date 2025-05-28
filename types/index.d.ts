@@ -25,16 +25,6 @@ export interface EncodeOptions {
   chroma_quality: number
 }
 
-export function encodeSync(
-  input: Buffer,
-  width: number,
-  height: number,
-  options?: Partial<EncodeOptions>
-): Buffer
+export function encodeSync(input: Buffer, width: number, height: number, options?: Partial<EncodeOptions>): Buffer
 
-export function encode(
-  input: Buffer,
-  width: number,
-  height: number,
-  options?: Partial<EncodeOptions>
-): Promise<Buffer>
+export function encode(input: Buffer, width: number, height: number, options?: Partial<EncodeOptions>): Promise<Buffer>

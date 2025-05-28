@@ -40,12 +40,7 @@ export interface EncodeOptions {
 this will **block** the EventLoop, **do not** use in production
 
 ```ts
-export function encodeSync(
-  input: Buffer,
-  width: number,
-  height: number,
-  options?: Partial<EncodeOptions>
-): Buffer
+export function encodeSync(input: Buffer, width: number, height: number, options?: Partial<EncodeOptions>): Buffer
 ```
 
 ### encode
@@ -53,12 +48,7 @@ export function encodeSync(
 same as `encodeSync` except it's using libuv to encode and return Promise
 
 ```ts
-export function encode(
-  input: Buffer,
-  width: number,
-  height: number,
-  options?: Partial<EncodeOptions>
-): Promise<Buffer>
+export function encode(input: Buffer, width: number, height: number, options?: Partial<EncodeOptions>): Promise<Buffer>
 ```
 
 ### defaultOptions

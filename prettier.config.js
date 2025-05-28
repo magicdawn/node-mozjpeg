@@ -3,7 +3,7 @@ module.exports = {
   overrides: [
     {
       files: 'binding.gyp',
-      options: {parser: 'json'},
+      options: { parser: 'json' },
     },
   ],
 }

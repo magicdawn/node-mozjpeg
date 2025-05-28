@@ -5,7 +5,7 @@ const sharp = require('sharp')
  */
 
 module.exports = async function decode(input) {
-  const {data, info} = await sharp(input).raw().toBuffer({resolveWithObject: true})
+  const { data, info } = await sharp(input).raw().toBuffer({ resolveWithObject: true })
   const dataRgba = await sharp(input).ensureAlpha().raw().toBuffer()
 
   // example info
@@ -17,6 +17,6 @@ module.exports = async function decode(input) {
   //   premultiplied: false,
   //   size: 3001500
   // }
-  const {width, height, channels} = info
-  return {data, dataRgba, width, height, channels}
+  const { width, height, channels } = info
+  return { data, dataRgba, width, height, channels }
 }

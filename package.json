@@ -2,20 +2,36 @@
   "name": "node-mozjpeg",
   "version": "1.0.1",
   "description": "mozjpeg node binding",
+  "keywords": [
+    "mozjpeg",
+    "binding",
+    "compress"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/magicdawn/node-mozjpeg#readme",
+  "bugs": {
+    "url": "https://github.com/magicdawn/node-mozjpeg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/magicdawn/node-mozjpeg.git"
+  },
+  "author": "magicdawn",
+  "files": [
+    "CHANGELOG.md",
+    "LICENSE",
+    "README.md",
+    "binding.gyp",
+    "index.js",
+    "install",
+    "package.json",
+    "src",
+    "types/index.d.ts"
+  ],
   "main": "index.js",
   "types": "types/index.d.ts",
-  "files": [
-    "src",
-    "install",
-    "index.js",
-    "types/index.d.ts",
-    "binding.gyp",
-    "package.json",
-    "README.md",
-    "CHANGELOG.md",
-    "LICENSE"
-  ],
   "scripts": {
+    "prepare": "husky",
     "test": "mocha && tsd",
     "test-cover": "nyc --reporter=lcov --reporter=text mocha",
     "report-cover": "codecov",
@@ -23,46 +39,34 @@
     "build-native": "node install/build-dep.js && node-gyp rebuild",
     "build-native-ia32": "node install/build-dep.js --ia32 && node-gyp rebuild --arch ia32",
     "install": "prebuild-install --runtime=napi || npm run build-native",
-    "prebuild": "prebuild --runtime=napi",
-    "prepare": "husky install"
+    "prebuild": "prebuild --runtime=napi"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/magicdawn/node-mozjpeg.git"
+  "dependencies": {
+    "bindings": "^1.5.0",
+    "node-addon-api": "^8.3.1",
+    "prebuild-install": "^7.1.3"
   },
-  "keywords": [
-    "mozjpeg",
-    "binding",
-    "compress"
-  ],
-  "author": "magicdawn",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/magicdawn/node-mozjpeg/issues"
-  },
-  "homepage": "https://github.com/magicdawn/node-mozjpeg#readme",
   "devDependencies": {
-    "@magicdawn/eslint-config": "latest",
-    "@magicdawn/prettier-config": "latest",
-    "@types/node": "^20.10.5",
+    "@magicdawn/eslint-config": "^1.5.3",
+    "@magicdawn/prettier-config": "^0.1.0",
+    "@types/node": "^22.15.23",
     "benchmark": "^2.1.4",
     "blocked": "^1.3.0",
     "blocked-at": "^1.2.0",
     "bytes": "^3.1.2",
-    "codecov": "^3.8.2",
-    "eslint": "^8.56.0",
-    "husky": "^8.0.3",
+    "eslint": "^9.27.0",
+    "husky": "^9.1.7",
     "lint-staged": "latest",
-    "mocha": "^10.2.0",
+    "mocha": "^11.5.0",
     "napa": "^3.0.0",
-    "node-gyp": "^10.0.1",
-    "nyc": "^15.1.0",
-    "prebuild": "^12.1.0",
+    "node-gyp": "^11.2.0",
+    "nyc": "^17.1.0",
+    "prebuild": "^13.0.1",
     "prettier": "latest",
     "promise.sleep": "^0.2.0",
-    "sharp": "^0.33.1",
+    "sharp": "^0.34.2",
     "should": "^13.2.3",
-    "tsd": "^0.30.0"
+    "tsd": "^0.32.0"
   },
   "lint-staged": {
     "*.{js,ts,md}": [
@@ -71,11 +75,6 @@
   },
   "napa": {
     "mozjpeg-src": "mozilla/mozjpeg#v3.3.1"
-  },
-  "dependencies": {
-    "bindings": "^1.5.0",
-    "node-addon-api": "^7.0.0",
-    "prebuild-install": "^7.1.1"
   },
   "binary": {
     "host": "https://cdn.jsdelivr.net/gh/magicdawn/prebuild-binary@master",

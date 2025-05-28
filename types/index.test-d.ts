@@ -1,4 +1,4 @@
-import {expectType} from 'tsd'
-import {encodeSync, encode, version} from '..'
+import { expectType } from 'tsd'
+import { version } from '..'
 
 expectType<string>(version)

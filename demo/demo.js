@@ -1,20 +1,20 @@
-const {performance} = require('perf_hooks')
+const { performance } = require('node:perf_hooks')
 const start = performance.now()
-const path = require('path')
-const fs = require('fs')
+const assert = require('node:assert')
+const fs = require('node:fs')
 
-// cnpm i blocked-at blocked promise.sleep
-const decode = require('../test/fixtures/decode')
-const {encodeSync, encode} = require('..')
+const path = require('node:path')
+const blocked = require('blocked')
+const blockedAt = require('blocked-at')
+
 // const {encode: encodeUseWasm} = require('handy-img/lib/codec/mozjpeg.js')
 const bytes = require('bytes')
-
-const blockedAt = require('blocked-at')
-const blocked = require('blocked')
 const sleep = require('promise.sleep')
-const assert = require('assert')
+const { encodeSync, encode } = require('..')
+// cnpm i blocked-at blocked promise.sleep
+const decode = require('../test/fixtures/decode')
 
-const img = path.join(__dirname + '/../test/fixtures/test.jpg')
+const img = path.join(`${__dirname}/../test/fixtures/test.jpg`)
 console.log(img)
 
 // NOTE: blockedAt stacktrace 不准
@@ -26,7 +26,7 @@ blocked(
   (ms) => {
     console.log(`!!! Blocked for ${ms}ms`)
   },
-  {threshold: 50, interval: 10}
+  { threshold: 50, interval: 10 },
 )
 
 // blockedAt((time, stack) => {
@@ -34,7 +34,7 @@ blocked(
 // })
 
 async function main() {
-  const {data, dataRgba, width, height, channels} = await decode(img)
+  const { data, dataRgba, width, height, channels } = await decode(img)
   assert(data.byteLength === width * height * channels)
 
   {
@@ -42,7 +42,7 @@ async function main() {
     const s = performance.now()
     const encoded = encodeSync(dataRgba, width, height)
     console.log(encoded, bytes(encoded.byteLength))
-    fs.writeFileSync(__dirname + '/compress-via-addon-encode.jpg', encoded)
+    fs.writeFileSync(`${__dirname}/compress-via-addon-encode.jpg`, encoded)
     console.log('time encode-use-addon %sms', (performance.now() - s).toFixed())
     console.log('---------------------addon encodeSync-----------------')
   }
@@ -52,7 +52,7 @@ async function main() {
     const s = performance.now()
     const encoded = await encode(dataRgba, width, height)
     console.log(encoded, bytes(encoded.byteLength))
-    fs.writeFileSync(__dirname + '/compress-via-addon-encodeAsync.jpg', encoded)
+    fs.writeFileSync(`${__dirname}/compress-via-addon-encodeAsync.jpg`, encoded)
     console.log('time encode-use-addon %sms', (performance.now() - s).toFixed())
     console.log('---------------------addon encode-----------------')
   }

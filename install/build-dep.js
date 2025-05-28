@@ -14,9 +14,9 @@
 // make libjpeg.la
 // exit 0
 
-const {join} = require('path')
-const {execSync} = require('child_process')
-const fs = require('fs')
+const { execSync } = require('node:child_process')
+const fs = require('node:fs')
+const { join } = require('node:path')
 
 const exec = (cmd) => {
   console.log('[exec]: %s', cmd)
@@ -110,7 +110,7 @@ function buildWinIa32() {
 function isIa32() {
   if (process.env.npm_config_arch === 'ia32') return true
 
-  for (let item of process.argv) {
+  for (const item of process.argv) {
     if (item && item.includes('ia32')) {
       return true
     }

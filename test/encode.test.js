@@ -1,11 +1,11 @@
+const { encode, encodeSync } = require('..')
 const decode = require('./fixtures/decode')
-const {encode, encodeSync} = require('..')
 
-const file = __dirname + '/fixtures/test.jpg'
+const file = `${__dirname}/fixtures/test.jpg`
 
 describe('encode', function () {
   it('encodeSync', async function () {
-    const {data, dataRgba, width, height} = await decode(file)
+    const { data, dataRgba, width, height } = await decode(file)
     let buf
 
     // channels=4
@@ -15,7 +15,7 @@ describe('encode', function () {
   })
 
   it('encode', async () => {
-    const {data, dataRgba, width, height} = await decode(file)
+    const { data, dataRgba, width, height } = await decode(file)
     let buf
 
     // channels=4

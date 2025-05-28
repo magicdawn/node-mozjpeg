@@ -22,3 +22,5 @@ coverage.*
 /demo/*
 !/demo/demo.js
 !/demo/bench.js
+
+/compile_commands*

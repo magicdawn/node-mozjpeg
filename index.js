@@ -1,11 +1,11 @@
-const assert = require('assert')
+const assert = require('node:assert')
 
 const tryRelease = () => {
   try {
     // prevent webpack error
     const type = 'Release'
     return require(`./build/${type}/mozjpeg.node`)
-  } catch (e) {
+  } catch {
     //  noop
   }
 }
@@ -14,7 +14,7 @@ const tryDebug = () => {
     // prevent webpack error
     const type = 'Debug'
     return require(`./build/${type}/mozjpeg.node`)
-  } catch (e) {
+  } catch {
     //  noop
   }
 }
@@ -54,7 +54,7 @@ const defaultOptions = {
  * @param {Buffer} buf
  * @param {number} width
  * @param {number} height
- * @param {Object} options
+ * @param {object} options
  * @returns {Buffer}
  */
 
