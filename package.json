@@ -43,7 +43,7 @@
     "build-native": "node install/build-dep.js && node-gyp rebuild",
     "build-native-ia32": "node install/build-dep.js --ia32 && node-gyp rebuild --arch ia32",
     "install": "prebuild-install --runtime=napi --target 3 || npm run build-native",
-    "prebuild": "prebuild --runtime=napi"
+    "prebuild": "prebuild --runtime=napi --target 3"
   },
   "dependencies": {
     "bindings": "^1.5.0",
